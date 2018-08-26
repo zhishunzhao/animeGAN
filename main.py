@@ -42,7 +42,7 @@ parser.add_argument('--binary', action='store_true', help='z from bernoulli dist
 
 # simply prefer this way
 arg_list = [
-    '--dataRoot', '/home/jielei/data/danbooru-faces',
+    '--dataRoot', '/home/manager/jason/anime-faces',
     '--workers', '12',
     '--batchSize', '128',
     '--imageSize', '64',
