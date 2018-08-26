@@ -14,7 +14,7 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from torch.autograd import Variable
 from torch.utils.data.dataloader import default_collate
-
+from Dataloaderr import DataLoaderIter
 ### load project files
 import models
 from models import weights_init
@@ -124,7 +124,6 @@ dataset = dset.ImageFolder(
         ])
 )
 
-
 def my_collate_fn(batch):
     '''
     batch中每个元素形如(data, label)
@@ -136,7 +135,7 @@ def my_collate_fn(batch):
 #print(dataSet[11])
 # dataloader = DataLoader(dataset, 2,  num_workers=1,shuffle=True)
 
-dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
+dataloader = DataLoaderIter(dataset, batch_size=opt.batchSize,
                                          collate_fn=my_collate_fn,
                                          shuffle=True, num_workers=opt.workers)
 
