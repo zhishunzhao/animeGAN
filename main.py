@@ -114,16 +114,22 @@ ndf = opt.ndf
 n_extra_d = opt.n_extra_layers_d
 n_extra_g = opt.n_extra_layers_g
 
-dataset = dset.ImageFolder(
-    root=opt.dataRoot,
-    transform=transforms.Compose([
-            transforms.Scale(opt.imageSize),
-            # transforms.CenterCrop(opt.imageSize),
-            transforms.ToTensor(),
-            transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)), # bring images to (-1,1)
-        ])
-)
+#dataset = dset.ImageFolder(
+#    root=opt.dataRoot,
+#
+#)
+import random
+class NewDogCat(dset.ImageFolder): # 继承前面实现的DogCat数据集
+    def __getitem__(self, index):
+        try:
+            # 调用父类的获取函数，即 DogCat.__getitem__(self, index)
+            return super(NewDogCat,self).__getitem__(index)
+        except:
+            #对于诸如样本损坏或数据集加载异常等情况，还可以通过其它方式解决。例如但凡遇到异常情况，就随机取一张图片代替：
+            new_index = random.randint(0, len(self) - 1)
+            return None
 
+from torch.utils.data.dataloader import default_collate # 导入默认的拼接方式
 def my_collate_fn(batch):
     '''
     batch中每个元素形如(data, label)
@@ -132,10 +138,17 @@ def my_collate_fn(batch):
     batch = list(filter(lambda x:x[0] is not None, batch))
     if len(batch) == 0: return torch.Tensor()
     return default_collate(batch) # 用默认方式拼接过滤后的batch数据
-#print(dataSet[11])
-# dataloader = DataLoader(dataset, 2,  num_workers=1,shuffle=True)
 
-dataloader = DataLoaderIter(dataset, batch_size=opt.batchSize,
+transform=transforms.Compose([
+            transforms.Scale(opt.imageSize),
+            # transforms.CenterCrop(opt.imageSize),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)), # bring images to (-1,1)
+        ])
+
+dataset = NewDogCat(root=opt.dataRoot, transform=transform)
+
+dataloader =  torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
                                          collate_fn=my_collate_fn,
                                          shuffle=True, num_workers=opt.workers)
 
