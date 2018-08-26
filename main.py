@@ -57,7 +57,7 @@ arg_list = [
     '--ngpu', '1',
     '--netG', '',
     '--netD', '',
-    '--outDir', './results',
+    '--outDir', '/home/manager/jason/result',
     '--model', '1',
     '--d_labelSmooth', '0.1', # 0.25 from imporved-GAN paper
     '--n_extra_layers_d', '0',
