@@ -153,6 +153,8 @@ optimizerG = optim.Adam(netG.parameters(), lr = opt.lr, betas = (opt.beta1, 0.99
 for epoch in range(opt.niter):
     try:
         for i, data in enumerate(dataloader, 0):
+    except OSError as e:
+        continue
             start_iter = time.time()
             ############################
             # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
@@ -213,5 +215,3 @@ for epoch in range(opt.niter):
             # do checkpointing
             torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outDir, epoch))
             torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outDir, epoch))
-    except OSError as e:
-        continue
