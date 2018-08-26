@@ -151,10 +151,12 @@ optimizerD = optim.Adam(netD.parameters(), lr = opt.lr, betas = (opt.beta1, 0.99
 optimizerG = optim.Adam(netG.parameters(), lr = opt.lr, betas = (opt.beta1, 0.999))
 
 for epoch in range(opt.niter):
-    try:
-        for i, data in enumerate(dataloader, 0):
-    except OSError as e:
-        continue
+
+        for i in range(opt.batchSize):
+            try:
+                data = dataloader[i]
+            except OSError as e:
+                continue
             start_iter = time.time()
             ############################
             # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
