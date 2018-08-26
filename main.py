@@ -13,6 +13,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
 from torch.autograd import Variable
+from torch.utils.data.dataloader import default_collate
 
 ### load project files
 import models
@@ -41,8 +42,6 @@ parser.add_argument('--n_extra_layers_g', type=int, default=1, help='number of e
 parser.add_argument('--binary', action='store_true', help='z from bernoulli distribution, with prob=0.5')
 
 # simply prefer this way
-<<<<<<< HEAD
-<<<<<<< HEAD
 arg_list = [
     '--dataRoot', '/home/manager/jason/anime-faces',
     '--workers', '12',
@@ -64,9 +63,9 @@ arg_list = [
     '--n_extra_layers_d', '0',
     '--n_extra_layers_g', '1', # in the sense that generator should be more powerful
 ]
-=======
-=======
->>>>>>> parent of 0bd5490... fix OSError
+
+
+
 # arg_list = [
 #     '--dataRoot', '/home/jielei/data/danbooru-faces',
 #     '--workers', '12',
@@ -88,13 +87,9 @@ arg_list = [
 #     '--n_extra_layers_d', '0',
 #     '--n_extra_layers_g', '1', # in the sense that generator should be more powerful
 # ]
-<<<<<<< HEAD
->>>>>>> parent of 0bd5490... fix OSError
-=======
->>>>>>> parent of 0bd5490... fix OSError
 
 args = parser.parse_args()
-# opt = parser.parse_args(arg_list)
+opt = parser.parse_args(arg_list)
 print(opt)
 
 try:
@@ -128,7 +123,21 @@ dataset = dset.ImageFolder(
             transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)), # bring images to (-1,1)
         ])
 )
+
+
+def my_collate_fn(batch):
+    '''
+    batch中每个元素形如(data, label)
+    '''
+    # 过滤为None的数据
+    batch = list(filter(lambda x:x[0] is not None, batch))
+    if len(batch) == 0: return torch.Tensor()
+    return default_collate(batch) # 用默认方式拼接过滤后的batch数据
+#print(dataSet[11])
+# dataloader = DataLoader(dataset, 2,  num_workers=1,shuffle=True)
+
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
+                                         collate_fn=my_collate_fn,
                                          shuffle=True, num_workers=opt.workers)
 
 # load models 
@@ -180,78 +189,8 @@ fixed_noise = Variable(fixed_noise)
 optimizerD = optim.Adam(netD.parameters(), lr = opt.lr, betas = (opt.beta1, 0.999))
 optimizerG = optim.Adam(netG.parameters(), lr = opt.lr, betas = (opt.beta1, 0.999))
 
+
 for epoch in range(opt.niter):
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-        for i in range(opt.batchSize):
-            try:
-                data = dataloader.next()
-            except OSError as e:
-                continue
-            start_iter = time.time()
-            ############################
-            # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
-            ###########################
-            # train with real
-            netD.zero_grad()
-            real_cpu, _ = data
-            batch_size = real_cpu.size(0)
-            input.data.resize_(real_cpu.size()).copy_(real_cpu)
-            label.data.resize_(batch_size).fill_(real_label - opt.d_labelSmooth) # use smooth label for discriminator
-
-            output = netD(input)
-            errD_real = criterion(output, label)
-            errD_real.backward()
-            D_x = output.data.mean()
-            # train with fake
-            noise.data.resize_(batch_size, nz, 1, 1)
-            if opt.binary:
-                bernoulli_prob.resize_(noise.data.size())
-                noise.data.copy_(2*(torch.bernoulli(bernoulli_prob)-0.5))
-            else:
-                noise.data.normal_(0, 1)
-            fake,z_prediction = netG(noise)
-            label.data.fill_(fake_label)
-            output = netD(fake.detach()) # add ".detach()" to avoid backprop through G
-            errD_fake = criterion(output, label)
-            errD_fake.backward() # gradients for fake/real will be accumulated
-            D_G_z1 = output.data.mean()
-            errD = errD_real + errD_fake
-            optimizerD.step() # .step() can be called once the gradients are computed
-
-            ############################
-            # (2) Update G network: maximize log(D(G(z)))
-            ###########################
-            netG.zero_grad()
-            label.data.fill_(real_label) # fake labels are real for generator cost
-            output = netD(fake)
-            errG = criterion(output, label)
-            errG.backward(retain_variables=True) # True if backward through the graph for the second time
-            if opt.model == 2: # with z predictor
-                errG_z = criterion_MSE(z_prediction, noise)
-                errG_z.backward()
-            D_G_z2 = output.data.mean()
-            optimizerG.step()
-
-            end_iter = time.time()
-            print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f Elapsed %.2f s'
-                  % (epoch, opt.niter, i, len(dataloader),
-                     errD.data[0], errG.data[0], D_x, D_G_z1, D_G_z2, end_iter-start_iter))
-            if i % 100 == 0:
-                # the first 64 samples from the mini-batch are saved.
-                vutils.save_image(real_cpu[0:64,:,:,:],
-                        '%s/real_samples.png' % opt.outDir, nrow=8)
-                fake,_ = netG(fixed_noise)
-                vutils.save_image(fake.data[0:64,:,:,:],
-                        '%s/fake_samples_epoch_%03d.png' % (opt.outDir, epoch), nrow=8)
-        if epoch % 1 == 0:
-            # do checkpointing
-            torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outDir, epoch))
-            torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outDir, epoch))
-=======
-=======
->>>>>>> parent of 0bd5490... fix OSError
     for i, data in enumerate(dataloader, 0):
         start_iter = time.time()
         ############################
@@ -313,7 +252,4 @@ for epoch in range(opt.niter):
         # do checkpointing
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outDir, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outDir, epoch))
-<<<<<<< HEAD
->>>>>>> parent of 0bd5490... fix OSError
-=======
->>>>>>> parent of 0bd5490... fix OSError
+
