@@ -42,6 +42,7 @@ parser.add_argument('--binary', action='store_true', help='z from bernoulli dist
 
 # simply prefer this way
 <<<<<<< HEAD
+<<<<<<< HEAD
 arg_list = [
     '--dataRoot', '/home/manager/jason/anime-faces',
     '--workers', '12',
@@ -64,6 +65,8 @@ arg_list = [
     '--n_extra_layers_g', '1', # in the sense that generator should be more powerful
 ]
 =======
+=======
+>>>>>>> parent of 0bd5490... fix OSError
 # arg_list = [
 #     '--dataRoot', '/home/jielei/data/danbooru-faces',
 #     '--workers', '12',
@@ -85,6 +88,9 @@ arg_list = [
 #     '--n_extra_layers_d', '0',
 #     '--n_extra_layers_g', '1', # in the sense that generator should be more powerful
 # ]
+<<<<<<< HEAD
+>>>>>>> parent of 0bd5490... fix OSError
+=======
 >>>>>>> parent of 0bd5490... fix OSError
 
 args = parser.parse_args()
@@ -176,6 +182,7 @@ optimizerG = optim.Adam(netG.parameters(), lr = opt.lr, betas = (opt.beta1, 0.99
 
 for epoch in range(opt.niter):
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         for i in range(opt.batchSize):
             try:
@@ -243,6 +250,8 @@ for epoch in range(opt.niter):
             torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outDir, epoch))
             torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outDir, epoch))
 =======
+=======
+>>>>>>> parent of 0bd5490... fix OSError
     for i, data in enumerate(dataloader, 0):
         start_iter = time.time()
         ############################
@@ -304,4 +313,7 @@ for epoch in range(opt.niter):
         # do checkpointing
         torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outDir, epoch))
         torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outDir, epoch))
+<<<<<<< HEAD
+>>>>>>> parent of 0bd5490... fix OSError
+=======
 >>>>>>> parent of 0bd5490... fix OSError
