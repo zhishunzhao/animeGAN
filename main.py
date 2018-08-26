@@ -127,7 +127,7 @@ class NewDogCat(dset.ImageFolder): # 继承前面实现的DogCat数据集
         except:
             #对于诸如样本损坏或数据集加载异常等情况，还可以通过其它方式解决。例如但凡遇到异常情况，就随机取一张图片代替：
             new_index = random.randint(0, len(self) - 1)
-            return None
+            return self[new_index]
 
 from torch.utils.data.dataloader import default_collate # 导入默认的拼接方式
 def my_collate_fn(batch):
