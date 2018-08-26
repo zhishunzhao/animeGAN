@@ -154,7 +154,7 @@ for epoch in range(opt.niter):
 
         for i in range(opt.batchSize):
             try:
-                data = dataloader[i]
+                data = dataloader.next()
             except OSError as e:
                 continue
             start_iter = time.time()
