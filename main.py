@@ -40,7 +40,7 @@ parser.add_argument('--n_extra_layers_d', type=int, default=0, help='number of e
 parser.add_argument('--n_extra_layers_g', type=int, default=1, help='number of extra conv layers in G')
 parser.add_argument('--binary', action='store_true', help='z from bernoulli distribution, with prob=0.5')
 
-simply prefer this way
+# simply prefer this way
 arg_list = [
     '--dataRoot', '/home/jielei/data/danbooru-faces',
     '--workers', '12',
